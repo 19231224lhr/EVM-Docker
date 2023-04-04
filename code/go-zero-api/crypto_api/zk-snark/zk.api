@@ -1,0 +1,25 @@
+syntax = "v1"
+
+info(
+    title: "zk-snark api"
+    desc: "zk-snark api"
+    author: "hanser"
+    email: "1836080103@qq.com"
+)
+
+type (
+    merkleReq {
+        Name string `json:"name"`
+        Seed string `json:"seed"`
+        Length int `json:"length"`
+        ProofIndex int `json:"proofIndex"`
+    }
+    merkleRes {
+
+    }
+)
+
+service zk {
+    @handler zk_merkle
+    get /crypto/zkmerkle (vrfReq) returns (vrfRes)
+}

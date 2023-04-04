@@ -1,0 +1,15 @@
+syntax = "v1";
+
+service ShaService {
+  @handler("SHA256Handler")
+  post /sha256 (Sha256Request) returns (Sha256Response);
+}
+
+type Sha256Request {
+  data string `json:"data"`
+}
+
+type Sha256Response {
+  hash string `json:"hash"`
+}
+

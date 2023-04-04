@@ -1,0 +1,57 @@
+syntax = "v1"
+
+info(
+	title: "secret_sharing api"
+	desc: "secret_sharing api"
+	author: "hanser"
+	email: "1836080103@qq.com"
+)
+
+type (
+	// pietrzak
+	pietrzakReq {
+		Name       string `json:"name"`
+		Challenge  int64  `json:"challenge"`
+		Iterations int    `json:"iterations"`
+		Proof      string `json:"proof"`
+	}
+	pietrzakRes {
+		Out  string `json:"out"`
+		Out2 bool   `json:"out2"`
+	}
+
+	//wgo
+	wgoReq {
+		Name       string `json:"name"`
+		Difficulty int    `json:"difficulty"`
+		Input      string `json:"input"`      // string -> []byte
+		InputProof string `json:"inputProof"` // string -> []byte
+	}
+	wgoRes {
+		Output string `json:"output"`
+		Res    bool   `json:"res"`
+	}
+
+	// wrust
+	wrustReq {
+		Name       string `json:"name"`
+		Challenge  int64  `json:"challenge"`
+		Iterations int    `json:"iterations"`
+		Proof      string `json:"proof"`
+	}
+	wrustRes {
+		Out  string `json:"out"`
+		Out2 bool   `json:"out2"`
+	}
+)
+
+service vdf {
+	@handler vdf_pietrzak
+	get /crypto/vdfpietrzak (pietrzakReq) returns (pietrzakRes)
+	
+	@handler vdf_wgo
+	get /crypto/vdfwgo (wgoReq) returns (wgoRes)
+	
+	@handler vdf_wrust
+	get /crypto/vdfwrust (wrustReq) returns (wrustRes)
+}

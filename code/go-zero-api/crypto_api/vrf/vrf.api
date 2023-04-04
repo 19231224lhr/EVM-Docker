@@ -1,0 +1,27 @@
+syntax = "v1"
+
+info(
+	title: "vrf api"
+	desc: "vrf api"
+	author: "hanser"
+	email: "1836080103@qq.com"
+)
+
+type (
+	vrfReq {
+		Name    string `json:"name"`
+		Message string `json:"message"`
+		Vrf0    string `json:"vrf0"`
+		Proof   string `json:"proof"`
+	}
+	vrfRes {
+		Vrf0  string `json:"vrf0"`
+		Proof string `json:"proof"`
+		Res   bool   `json:"res"`
+	}
+)
+
+service vrf {
+	@handler vrf
+	get /crypto/vrf (vrfReq) returns (vrfRes)
+}

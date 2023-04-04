@@ -1,0 +1,15 @@
+type (
+	HashReq {
+		HashType    string `json:"hashType"`
+		HashMessage string `json:"hashMessage"`
+	}
+
+	HashRes {
+		Res []byte `json:"res"`
+	}
+)
+
+service hash-api {
+	@handler hash
+	get /crypto/hash (HashReq) returns (HashRes)
+}
