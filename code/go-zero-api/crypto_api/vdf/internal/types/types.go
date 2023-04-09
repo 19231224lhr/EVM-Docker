@@ -13,18 +13,6 @@ type PietrzakRes struct {
 	Out2 bool   `json:"out2"`
 }
 
-type WgoReq struct {
-	Name       string `json:"name"`
-	Difficulty int    `json:"difficulty"`
-	Input      string `json:"input"`      // string -> []byte
-	InputProof string `json:"inputProof"` // string -> []byte
-}
-
-type WgoRes struct {
-	Output string `json:"output"`
-	Res    bool   `json:"res"`
-}
-
 type WrustReq struct {
 	Name       string `json:"name"`
 	Challenge  int64  `json:"challenge"`

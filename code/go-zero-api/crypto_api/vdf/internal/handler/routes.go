@@ -19,11 +19,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/crypto/vdfwgo",
-				Handler: vdf_wgoHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
 				Path:    "/crypto/vdfwrust",
 				Handler: vdf_wrustHandler(serverCtx),
 			},

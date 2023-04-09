@@ -3,7 +3,6 @@ package logic
 import (
 	"blockchain-crypto/vdf/wesolowski_rust"
 	"context"
-	"encoding/base64"
 	"fmt"
 
 	"blockchain-crypto/crypto_api/vdf/internal/svc"
@@ -32,11 +31,9 @@ func (l *Vdf_wrustLogic) Vdf_wrust(req *types.WrustReq) (resp *types.WrustRes, e
 	case "1":
 		out := wesolowski_rust.Execute(req.Challenge, req.Iterations)
 		fmt.Println(out)
-		// 将vrf0字节数组转换为 Base64 编码的字符串
-		out_string := base64.StdEncoding.EncodeToString(out)
-		fmt.Println("out_string", out_string)
+		fmt.Println("out_string", string(out))
 		return &types.WrustRes{
-			Out: out_string,
+			Out: string(out),
 		}, nil
 	case "2":
 		out2 := wesolowski_rust.Verify(req.Challenge, req.Iterations, req.Proof)

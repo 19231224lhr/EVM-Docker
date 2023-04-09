@@ -27,6 +27,7 @@ func main() {
 	//  (2) 验证（任何人）:给定分享者公钥X[1]，多项式的承诺信息pubPoly，加密的分享信息encShares[1]，生成元H，验证加密的秘密分享信息的一致性
 	res := pvss.VerifyEncShare(suite, H, X[1], pubPoly, encShares[1])
 	fmt.Println(res)
+	fmt.Println("suite = ", suite)
 
 	// （3） 解密获得未加密的子秘密（分享者）（默认会进行一致性检验）
 	decShare1, _ := pvss.DecShare(suite, H, X[1], x[1], encShares[1], pubPoly)

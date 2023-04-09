@@ -2,11 +2,23 @@ package pietrzak
 
 import (
 	"os/exec"
+	"path"
+	"runtime"
 	"strconv"
 )
 
+// 获取当前执行文件绝对路径（go run）
+func getCurrentAbPathByCaller() string {
+	var abPath string
+	_, filename, _, ok := runtime.Caller(0)
+	if ok {
+		abPath = path.Dir(filename)
+	}
+	return abPath
+}
+
 func checkVDFExists() error {
-	_, err := exec.LookPath("./vdf-cli")
+	_, err := exec.LookPath(getCurrentAbPathByCaller() + "/vdf-cli")
 	return err
 }
 
@@ -31,7 +43,7 @@ func Execute(challenge int64, iterations int) []byte {
 		return nil
 	}
 
-	cmd1 := "./vdf-cli -tpietrzak " + strconv.FormatInt(challenge, 16) + " " + strconv.Itoa(iterations)
+	cmd1 := getCurrentAbPathByCaller() + "/vdf-cli -tpietrzak " + strconv.FormatInt(challenge, 16) + " " + strconv.Itoa(iterations)
 	cmd2 := "taskset -pc 0 $(pidof vdf-cli)"
 
 	go execCmd(cmd1, ch1)
@@ -53,7 +65,7 @@ func Verify(challenge int64, iterations int, proof string) bool {
 		return false
 	}
 
-	cmd1 := "./vdf-cli -tpietrzak " + strconv.FormatInt(challenge, 16) + " " + strconv.Itoa(iterations) + " " + proof
+	cmd1 := getCurrentAbPathByCaller() + "/vdf-cli -tpietrzak " + strconv.FormatInt(challenge, 16) + " " + strconv.Itoa(iterations) + " " + proof
 	cmd2 := "taskset -pc 0 $(pidof vdf-cli)"
 
 	go execCmd(cmd1, ch1)
