@@ -594,107 +594,37 @@ pietrzakRes {
 }
 ```
 
-### Pietrzak
-
-> 调用函数
->
-> ```go
-> out := pietrzak.Execute(170, 100)
-> fmt.Println(out)	// []
-> 
-> out2 := pietrzak.Verify(170, 100, "005271...")
-> fmt.Println(out2)	// false
-> ```
-
 #### Case1
 
-输入：`name，challenge，iterations`
+输入：`name（调用哪个方法，1代表生成，2代表验证），challenge，iterations`
 
 ```shell
-curl -X GET http://localhost:8000/crypto/vdfpietrzak -H 'Content-Type:application/json' -d '{"name":"1","challenge":1,"iterations":2,"proof":""}'
+curl -X GET http://localhost:8000/crypto/vdfpietrzak -H 'Content-Type:application/json' -d '{"name":"1","challenge":170,"iterations":100,"proof":""}'
 ```
 
 输出：`proof`
 
 ```shell
-{"out":"","out2":false}
+{"out":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b\n","out2":false}
 ```
 
-> **原函数可能有点问题，给出的例子中也是返回空字符串**
+问题修复，原因：没有给二进制文件可执行权限
+
+<img src="./api%E6%96%87%E6%A1%A3.assets/image-20230409104223340.png" alt="image-20230409104223340" style="zoom:80%;" />
 
 #### Case2
 
 输入：`name，challenge，iterations，proof`
 
 ```shell
-curl -X GET http://localhost:8000/crypto/vdfpietrzak -H 'Content-Type:application/json' -d '{"name":"2","challenge":1,"iterations":2,"proof":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b"}'
+curl -X GET http://localhost:8000/crypto/vdfpietrzak -H 'Content-Type:application/json' -d '{"name":"2","challenge":170,"iterations":100,"proof":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b\n"}'
 ```
-
-由于上一步没有输出，借用例子中的数据
 
 输出：`out2`
 
 ```shell
-{"out":"","out2":false}
+{"out":"","out2":true}
 ```
-
-> **使用原函数例子中的数据验证，结果依然是`false`**
-
-### Wesolowski_go
-
-```go
-//wgo
-wgoReq {
-	Name       string `json:"name"`
-	Difficulty int    `json:"difficulty"`
-	Input      string `json:"input"`      // string -> []byte
-	InputProof string `json:"inputProof"` // string -> []byte
-}
-wgoRes {
-	Output string `json:"output"`
-	Res    bool   `json:"res"`
-}
-```
-
-> 调用函数
->
-> ```go
-> vdf := wesolowski_go.New(100, input)
-> outputChannel := vdf.GetOutputChannel()
-> vdf.Execute()
-> output := <-outputChannel
-> log.Println(fmt.Sprintf("VDF verify %t", vdf.Verify(output)))
-> ```
-
-#### Case1
-
-输入：`name，difficulty，input`
-
-```shell
-curl -X GET http://localhost:8000/crypto/vdfwgo -H 'Content-Type:application/json' -d '{"name":"1","difficulty":100,"input":"3q2+796tvu/erb7v3q2+796tvu/erb7v3q2+796tvu8=","inputProof":""}'
-```
-
-输出：`output，res`
-
-```shell
-{"output":"ACj13knZPf9+IICpva3/HWOipKFD5qztuBS3i0kVS6brd9ltjE6++yrj9LUa9kIZBnwmaTOE7t/+yhA3Z8Kk9PDddToed4qjckY/gKP+AbLKhaO+FweouC7sz/0LwYOn9MPIhU0/RuwZvHl4NeSXtJ21e4oPsLh8Pzz7OmMdEu5A/+G8QQpy3UgEYT4L9r9ZaLdcvcdqtF2uFBtTZFub/V/9ZneHtJQdHh8waSmETO0P6Qv15iYyyzLiTw990nY0jdP3aTkdp0RWRzUT79hbNA8oUEhEtHAYf9tezLm/npiJfx+6hfSfb9vsr24Y4Sw05OUlZn9H3lBs1ZIc6BjgJqBrAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB","res":false}
-```
-
-#### Case2
-
-输入：`name，difficulty，input，inputProof`
-
-```shell
-curl -X GET http://localhost:8000/crypto/vdfwgo -H 'Content-Type:application/json' -d '{"name":"2","difficulty":100,"input":"3q2+796tvu/erb7v3q2+796tvu/erb7v3q2+796tvu8=","inputProof":"ACj13knZPf9+IICpva3/HWOipKFD5qztuBS3i0kVS6brd9ltjE6++yrj9LUa9kIZBnwmaTOE7t/+yhA3Z8Kk9PDddToed4qjckY/gKP+AbLKhaO+FweouC7sz/0LwYOn9MPIhU0/RuwZvHl4NeSXtJ21e4oPsLh8Pzz7OmMdEu5A/+G8QQpy3UgEYT4L9r9ZaLdcvcdqtF2uFBtTZFub/V/9ZneHtJQdHh8waSmETO0P6Qv15iYyyzLiTw990nY0jdP3aTkdp0RWRzUT79hbNA8oUEhEtHAYf9tezLm/npiJfx+6hfSfb9vsr24Y4Sw05OUlZn9H3lBs1ZIc6BjgJqBrAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB"}'
-```
-
-输出：`res`
-
-```shell
-{"output":"","res":true}
-```
-
-> 因为`proof`的数据类型也是私有变量，而且没有可以获取变量的方法，所以不能`json`序列化，这里使用传入一样的参数构造一样的变量来重新生成`proof`，不再通过`json`方法传输`proof`
 
 ### Wecolowski_rust
 
@@ -719,13 +649,13 @@ wrustRes {
 输入
 
 ```shell
-curl -X GET http://localhost:8000/crypto/vdfwrust -H 'Content-Type:application/json' -d '{"name":"1","challenge":1,"iterations":2,"proof":""}'
+curl -X GET http://localhost:8000/crypto/vdfwrust -H 'Content-Type:application/json' -d '{"name":"1","challenge":170,"iterations":100,"proof":""}'
 ```
 
 输出
 
 ```shell
-{"out":"","out2":false}
+{"out":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001\n","out2":false}
 ```
 
 #### Case2
@@ -733,14 +663,16 @@ curl -X GET http://localhost:8000/crypto/vdfwrust -H 'Content-Type:application/j
 输入
 
 ```shell
-curl -X GET http://localhost:8000/crypto/vdfwrust -H 'Content-Type:application/json' -d '{"name":"1","challenge":1,"iterations":2,"proof":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b"}'
+curl -X GET http://localhost:8000/crypto/vdfwrust -H 'Content-Type:application/json' -d '{"name":"2","challenge":170,"iterations":100,"proof":"005271e8f9ab2eb8a2906e851dfcb5542e4173f016b85e29d481a108dc82ed3b3f97937b7aa824801138d1771dea8dae2f6397e76a80613afda30f2c30a34b040baaafe76d5707d68689193e5d211833b372a6a4591abb88e2e7f2f5a5ec818b5707b86b8b2c495ca1581c179168509e3593f9a16879620a4dc4e907df452e8dd0ffc4f199825f54ec70472cc061f22eb54c48d6aa5af3ea375a392ac77294e2d955dde1d102ae2ace494293492d31cff21944a8bcb4608993065c9a00292e8d3f4604e7465b4eeefb494f5bea102db343bb61c5a15c7bdf288206885c130fa1f2d86bf5e4634fdc4216bc16ef7dac970b0ee46d69416f9a9acee651d158ac64915b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001\n"}'
 ```
 
 输出
 
 ```shell
-{"out":"","out2":false}
+{"out":"","out2":true}
 ```
+
+## 
 
 ## zk-SNARKs问题说明
 
